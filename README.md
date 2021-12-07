@@ -14,7 +14,7 @@ This is an instagram clone application that displays photos o various users one 
 * virtual environment
 * pip 
 ### Clone the Repo 
-* git clone https:https://github.com/Calebbii/News-API.git
+* git clone https://github.com/Calebbii/Instagram-App.git
 * Initialize git and add the remote repository
 * git init
 * git remote add origin <your-repository-url>
