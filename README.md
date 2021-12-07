@@ -2,7 +2,7 @@
 ## Author
 Caleb bii.
 ### Description
-This is an instagram clone application that displays photos o various users one can post comment and like.
+This is an instagram clone application that displays photos of various users one can post comment and like.
 ### Setup and installations
 * Clone Project to your machine
 * Activate a virtual environment on terminal: source virtual/bin/activate
