@@ -24,10 +24,10 @@ This is an instagram clone application that displays photos o various users one 
 * Install dependancies
 * Install dependancies that will create an environment for the app to run pip install -r requirements.txt
 ### Run The App 
-* python3.8 manage.py check
+* python3.9 manage.py check
 * python manage.py makemigrations news
-* python3.8 manage.py sqlmigrate news 0001
-* python3.8 manage.py migrate
+* python3.9 manage.py sqlmigrate news 0001
+* python3.9 manage.py migrate
 * python3.9 manage.py runserver 
 * Open localhost:5000
 
