@@ -1,17 +1,66 @@
 {% extends "base.html" %}
+{% load static %}
 {% load bootstrap4 %}
+{% block styles %}
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
 {% block content %}
-<h1> Welcome to the Moringa Tribune</h1>
 <div class="container-fluid">
     <div class="row photo">
-      <div class="col-md-1"></div>
+      <div class="col-md-3"></div>
       <!-- displaying photos photos -->
-      <div class="col-md-10">
+      <div class="col-md-9">
         <!-- Looping through photos   -->
         {% for image in images %}
-        <div class="col-md-3 col-sm-6">
+        <div class="col-md-6 col-sm-6">
           <!--Display photos photo images  -->
-          <h1><img src="./media/{{image.image}}" class="img-thumbnail" alt="Image" onclick="window.open(this.src)"></h1>
+          <h1><img src="{{base_image}}{{image.image}}" class="img-thumbnail" alt="Image" onclick="window.open(this.src)"></h1>
+          <div class="date">
+            <p>{{image.pub_date}}</p>
+            <p>{{image.image_caption}}</p>
+            <a href="{% url 'comment' image.id %}" class="btn btn-sm btn-info">Comment</a>
+            {% for comment in comments %}
+            <p>
+              <span class="font-weight-bold">{{comment.comment}} &middot;</span>
+              {{ comment }}
+            </p>
+            {% endfor %}
+            <div class="card-footer">
+              <!-- {{image.likes}} -->
+              <button type="button" onclick="myFunction()"><id= class="fa fa-heart-o" id="demo" onclick="myFunction()"></i></button>
+              {% for comment in comments %}
+              <p>
+                  <span class="font-weight-bold">{{ comment.comment }} &middot;</span>
+                  {{ comment }}
+              </p>
+              {% endfor %}
+              
+              {%block script%}
+              <script>
+                  var add = (function () {
+                    var counter = 0;
+                    return function () {return counter += 1;}
+                  })();
+                  
+                  function myFunction(){
+                    document.getElementById("demo").innerHTML = add();
+                  }
+                  </script>
+                  </head>
+                  <body>
+                  
+                      
+
+                      
+                  
+                  
+                  </body>
+
+              {%endblock%}
+
+           </div>
+          </div>
         </div>
   
         {% empty %}
