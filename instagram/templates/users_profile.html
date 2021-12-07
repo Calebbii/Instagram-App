@@ -1,14 +1,14 @@
 <h1>user profile</h1>
 {% extends "base.html" %}
-{% load bootstrap3 %}
+{% load bootstrap4 %}
 {% block content %}
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3"></div>
 
     <div class="col-md-3">
-      {% if user.profile.profile_photo.url %}
-      <img src="{{user.profile.profile_photo.url}}" alt="{{user.profile_photo.url}}" width="200" height="200"
+      {% if user.profile.profile_image.url %}
+      <img src="{{user.profile.profile_image.url}}" alt="{{user.profile_image.url}}" width="200" height="200"
         class="rounded-circle account-img">
         {% else %}
         <i style="font-size:100px;color:#4888BE" class="fa fa-user" aria-hidden="true"></i>
@@ -21,7 +21,7 @@
         </div>
 
         <div class="row2 mt-3">
-          <p class="">{{photos|length}} posts</p>
+          <p class="">{{images|length}} posts</p>
           <p class="">{{user.profile.saved_followers}} followers</p>
           <p class="">{{user.profile.saved_following}} following</p>
         </div>
@@ -35,43 +35,43 @@
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-4">
-      {% if photos %}
-      {% for photo in photos %}
+      {% if images %}
+      {% for image in images %}
       <div class="profile">
         <div class="row">
           <div class="col-md-2">
-            {% if photo.user.profile.profile_photo.url %}
-            <p><a href="{% url 'users_profile' photo.user.id %}"><img class="profile_photo"
-                  src="{{ photo.user.profile.profile_photo.url }}" alt="{{ photo.profile.name }}"></p>
+            {% if image.user.profile.profile_image.url %}
+            <p><a href="{% url 'users_profile' image.user.id %}"><img class="profile_image"
+                  src="{{ image.user.profile.profile_image.url }}" alt="{{ image.profile.name }}"></p>
                   {% else %}
                   <i style="font-size:100px;color:#4888BE" class="fa fa-user" aria-hidden="true"></i>
                   {% endif %}
           </div>
           <div class="col-md-2">
-            <p class="username" style="margin-top: 5px;">{{ photo.user.username }}</p>
+            <p class="username" style="margin-top: 5px;">{{ image.user.username }}</p>
           </div>
         </div>
         </a>
       </div>
       <div class="card-header">
-        <a href="{% url 'photo.detail' photo.id %}" class="open-project"><img src="{{photo.photo.url}}" alt="" class="img-thumbnail"></a>
+        <a href="{% url 'image.detail' image.id %}" class="open-project"><img src="{{image.image.url}}" alt="" class="img-thumbnail"></a>
       </div>
       <div class="card-body">
         <div>
-          <a href=" {% url 'like' image_id=photo.id %}">
+          <a href=" {% url 'like' image_id=image.id %}">
             <i class="fa fa-heart-o fa-3x text-success" aria-hidden="true"></i></a>
-          <p><strong class="ml-3 photo_likes">{{photo.saved_likes}} </strong>
+          <p><strong class="ml-3 image_likes">{{image.saved_likes}} </strong>
             <strong>Likes</strong>
           </p>
         </div>
         <div>
-          <p class=""><strong>{{photo.name}}</strong> {{photo.caption}}</p>
+          <p class=""><strong>{{image.name}}</strong> {{image.caption}}</p>
         </div>
-        {% for comment in photo.saved_comments %}
+        {% for comment in image.saved_comments %}
         <p class="ml-3"><span class="font-weight-bold text-success">{{comment.user.username}}</span>:
           {{comment.comment}}</p>
         {% endfor %}
-        <form action="{% url 'commentFunction' photo_id=photo.id %}" method="post">
+        <form action="{% url 'commentFunction' image_id=image.id %}" method="post">
           {% csrf_token %}
           {% bootstrap_form comment_form %}
           <input type="submit" class="btn btn-success btn-lg" style="margin-bottom: 10px;" value="Comment">

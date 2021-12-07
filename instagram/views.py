@@ -6,17 +6,20 @@ from django.contrib.auth.forms import UserCreationForm
 from instagram.forms import CommentsForm,PostForm, Registration, UpdateProfile, UpdateUser
 from instagram.models import Follows, Image, Likes, Profile
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required(login_url='/accounts/login/')
 def home(request):
     comment_form = CommentsForm()
     post_form = PostForm()
     images = Image.display_images()
     all_users = User.objects.all()
-    return render(request, 'home.html',{"images":images,"comment_form":comment_form,"post":post_form,"all_users":all_users})
+    base_image = "https://res.cloudinary.com/dtbko4o5h/image/upload/v1638685260/"
+    return render(request, 'home.html',{"images":images,"comment_form":comment_form,"post":post_form,"base_image":base_image,"all_users":all_users})
 
-
-def post(request):
+@login_required(login_url='/accounts/login/')
+def post_image(request):
     if request.method == 'POST':
         post_form = PostForm(request.POST,request.FILES) 
         if post_form.is_valid():
@@ -36,11 +39,12 @@ def detail(request,image_id):
         raise Http404()
     return render(request, 'imageDetails.html', {'image':image,'current_user':current_user})
 
+@login_required(login_url='/accounts/login/')
 def search_results(request):
     if 'search_user' in request.GET and request.GET["search_user"]:
         search_term = request.GET.get('search_user')
         users = Profile.search_profiles(search_term)
-        images = Image.search_photos(search_term)
+        images = Image.search_images(search_term)
         return render(request,'search.html',{"users":users,"images":images})
     else:
         return render(request,'search.html')
@@ -59,7 +63,7 @@ def register(request):
         form = Registration()
     return render(request,'registration/registration_form.html',{"form":form})
 
-
+@login_required(login_url='/accounts/login/')
 def profile(request):
     comment_form = CommentsForm()
     current_user = request.user
@@ -69,13 +73,7 @@ def profile(request):
     
     return render(request,'profile.html',{"images":images,'all_users':all_users,'comment_form':comment_form,'user_images':user_images,"current_user":current_user})
 
- 
-
-def allcomments(request,photo_id):
-    image = Image.objects.filter(pk = photo_id).first()
-    return render(request,'comments.html',{"image":image})
-
-
+@login_required(login_url='/accounts/login/')
 def users_profile(request,pk):
     comment_form = CommentsForm()
     user = User.objects.get(id = pk)
@@ -83,7 +81,8 @@ def users_profile(request,pk):
     c_user = request.user
     return render(request,'users_profile.html',{"user":user,'comment_form':comment_form,"image":image,"c_user":c_user})
 
-def update_profile(request):
+@login_required(login_url='/accounts/login/')
+def profile_update(request):
     if request.method == 'POST':
         user_form = UpdateUser(request.POST,instance=request.user)
         profile_form = UpdateProfile(request.POST,request.FILES,instance=request.user.profile)
@@ -99,8 +98,42 @@ def update_profile(request):
         'user_form':user_form,
         'profile_form':profile_form
     }
-    return render(request,'update.html',params)
+    return render(request,'update_profile.html',params)
 
+@login_required(login_url='/accounts/login/')
+def delete(request,image_id):
+    current_user = request.user
+    image = Image.objects.get(pk=image_id)
+    if image:
+        image.delete_post()
+    return redirect('home')
+
+
+@login_required(login_url='/accounts/login/')
+def comment(request,image_id):
+    current_user = request.user
+    image = Image.get_single_image(id=image_id)
+    if request.method == 'POST':
+        comment_form = CommentsForm(request.POST)
+       
+        
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.user = current_user
+            comment.image_id = image_id
+            comment.save()
+        return redirect('/')
+
+    else:
+        comment_form = CommentsForm()
+        return render(request,'comment.html',{"comment_form":comment_form,"image":image})  
+
+@login_required(login_url='/accounts/login/')
+def allcomments(request,image_id):
+    image = Image.objects.filter(pk = image_id).first()
+    return render(request,'comments.html',{"image":image})
+
+@login_required(login_url='/accounts/login/')
 def follow(request,user_id):
     followee = request.user
     followed = Follows.objects.get(pk=user_id)
@@ -108,39 +141,30 @@ def follow(request,user_id):
     follow_data.save()
     return redirect('others_profile')
 
-def like(request, image_id):
-    current_user = request.user
-    image=Image.objects.get(id=image_id)
-    new_like,created= Likes.objects.get_or_create(liker=current_user, image=image)
-    new_like.save()
+# def like(request, image_id):
+#     current_user = request.user
+#     image=Image.objects.get(id=image_id)
+#     new_like,created= Likes.objects.get_or_create(liker=current_user, image=image)
+#     new_like.save()
 
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+#     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
+def image_likes(request,image_id):
+    image =  Image.get_single_image(image_id)
+    user = request.user
+    user_id = user.id
+    
+    if user.is_authenticated:
+    
+        image.save()
+        
+    return redirect('home')
+
+@login_required(login_url='/accounts/login/')
 def unfollow(request,user_id):
     followee = request.user
     follower = Follows.objects.get(pk=user_id)
     follow_data = Follows.objects.filter(follower = follower,followee = followee).first()
     follow_data.delete()
     return redirect('users_profile')
-
-
-def delete(request,photo_id):
-    current_user = request.user
-    photo = Image.objects.get(pk=photo_id)
-    if photo:
-        photo.delete_post()
-    return redirect('home')
-
-
-def commentFunction(request,photo_id):
-    c_form = CommentsForm()
-    photo = Image.objects.filter(pk = photo_id).first()
-    if request.method == 'POST':
-        c_form = CommentsForm(request.POST)
-        if c_form.is_valid():
-            comment = c_form.save(commit = False)
-            comment.user = request.user
-            comment.photo = photo
-            comment.save() 
-    return redirect('home')
