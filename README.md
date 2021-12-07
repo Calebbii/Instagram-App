@@ -10,7 +10,7 @@ This is an instagram clone application that displays photos o various users one 
 * On your terminal run python3.9 manage.py runserver
 * Access the live site using the local host provided 
 ### Prerequisites
-* python3.9
+* python3.9  
 * virtual environment
 * pip 
 ### Clone the Repo 
