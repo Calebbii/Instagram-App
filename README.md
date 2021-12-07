@@ -41,4 +41,4 @@ python3.9 manager.py tests
 * HTML
 * CSS
 ### License
-[MIT Lisence]() Copyright (c) 2021 Calebbii.
+[MIT Lisence](https://github.com/Calebbii/Instagram-App/blob/master/LICENSE) Copyright (c) 2021 Calebbii.
