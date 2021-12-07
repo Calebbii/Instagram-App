@@ -7,17 +7,24 @@
       <div class="collapse navbar-collapse" id="navbarScroll">
         <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">All Photos</a>
+            <a class="nav-link active" aria-current="page" href="#">Reels</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">All Reels</a>
+            <a class="nav-link active" aria-current="page" href="{% url 'profile' %}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'post' %}">Post Photos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'admin:index' %}">Admin Dashboard</a>
           </li>
         </ul>
       </div>
 
-      <form class="d-flex">
-        <input class="form-control me-2" name="search" type="search" placeholder="" aria-label="Search">
+      <form class="d-flex" action="{% url 'search' %}">
+        <input class="form-control me-2" name="search" type="search" placeholder="username" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
+      <a class="nav-link active" aria-current="page" href="{% url 'logout' %}">Log Out</a>
     </div>
   </nav>
